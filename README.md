@@ -4,6 +4,9 @@ This script allows you to recode the B-factor column of a PDB/CIF file with any 
 
 This is useful for using molecular visualisation programs like PyMOL, to color proteins, for example using PyMOL's spectrum function to recolor a protein according to mutational effects.
 
+## Example result
+![example output](images/0%20example%20output.png)
+
 ## Usage
 0. Install Python and packages
 1. Prepare input files
@@ -17,25 +20,25 @@ https://www.python.org/downloads/windows/
 
 2. Download my github project
 
-[download project](images/1%20download.png)
+![download project](images/1%20download.png)
 
 3. Unzip folder
 4. Right-click folder and select "Open in Terminal"
 
-[open in terminal](images/2%20CMD.png)
+![open in terminal](images/2%20CMD.png)
 
 5. Enter the following into the terminal and press Enter:
 ```bash
 pip install -r requirements.txt
 ```
-[reqs](images/3%20reqs.png)
+![reqs](images/3%20reqs.png)
 
 ## 1 - Prepare input files
 In the "input" folder, replace "molecule.cif" with your protein of choice. The input has to be named "molecule.cif". You may change this in the .py file if you are not daunted by code.
 
 Similarly, you have to replace the data in the "newvalues.xlsx" file with your own. In the first column put the positions of the amino acid residues whose B-factor you want to change. In the right column, put the value.
 
-[input](images/4%20input.png)
+![input](images/4%20input.png)
 
 ## 2 - Run script
 1. Right-click project folder and select "Open in Terminal", like in step 0.4 above
@@ -65,7 +68,7 @@ select mutation_bad, (b < 1) and not (b = -999.0)
 ```
 select mutation_good, ((b = 1) or (b >1)) and not (b = -999.0)
 ```
-[pymol selections](images/5%20pymol%20selections.png)
+![pymol selections](images/5%20pymol%20selections.png)
 
 
 3. Color
@@ -81,7 +84,7 @@ spectrum b, white_red, mutation_good, minimum=1, maximum=8
 ```
 show surface, molecule_recoded
 ```
-[pymol coloring result](images/6%20pymol%20color%20result.png)
+![pymol coloring result](images/6%20pymol%20color%20result.png)
 
 ## Acknowledgements
 Inspired by Professor Tyler Starr, who explained the conceptual approach for recoding B-factors in PDB files to me. This implementation is independently written. I wanted to make a lightweight script that is non-programmer friendly.
