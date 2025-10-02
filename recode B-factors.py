@@ -2,37 +2,28 @@ import pandas as pd
 import os
 from pathlib import Path
 
-# --- Define project root ---
+# --- Define project root
 PROJECT_ROOT = Path(__file__).resolve().parent
 
-# --- Resolve input paths ---
-cif_path = PROJECT_ROOT / "input" / "molecule.cif"
-xlsx_path = PROJECT_ROOT / "input" / "newvalues.xlsx"
+# --- Input and output paths relative to project root
+molecule_path = PROJECT_ROOT / "input" / "molecule.cif"
+values_path = PROJECT_ROOT / "input" / "newvalues.xlsx"
+output_path = PROJECT_ROOT / "output" / "molecule_recoded.cif"
+####output_xlsx = PROJECT_ROOT / "output" / "output_table.xlsx"
 
-# --- Define outputs (always relative to project) ---
-output_xlsx = PROJECT_ROOT / "output" / "output_table.xlsx"
-output_cif = PROJECT_ROOT / "output" / "molecule_recoded.cif"
+# Default B-factor for residues without mutation effect that is to be ignored when coloring
+default_bfactor = -999  
 
-# Ensure output folder exists
-output_xlsx.parent.mkdir(parents=True, exist_ok=True)
-
-# --- Debug print (optional) ---
-print(f"Using CIF file: {cif_path}")
-print(f"Using Excel file: {xlsx_path}")
-print(f"Results will be saved in: {output_xlsx} and {output_cif}")
-
-default_bfactor = -999  # Default B-factor for residues without mutation effect that is to be ignored when coloring
-
-# Headers for pdbdf
+# Headers for of pdb
 pdb_headers = [
     "Type", "AtomID", "Element", "Atomtype", "Bullet", "Residue", "ChainID", "dontknow1", "ResidueID", "questionmark", "coordX", "coordY", "coordZ", "Occupancy", "Bfactor", "dontknow2", "dontknow3", "dontknow4"
 ]
 
-# Read chain1.cif and extract ATOM lines
+# Read molecule.cif and extract ATOM lines
 metadata_lines = []
 atom_lines = []
 
-with open(cif_path, 'r') as f:
+with open(molecule_path, 'r') as f:
     for line in f:
         if line.startswith('ATOM'):
             atom_lines.append(line.strip())
@@ -42,7 +33,7 @@ atom_data = [line.split() for line in atom_lines]
 pdbdf = pd.DataFrame(atom_data, columns=pdb_headers)
 
 # Read mutation effects xlsx
-mutationeffects = pd.read_excel(xlsx_path)
+mutationeffects = pd.read_excel(values_path)
 
 # Convert convert both to int for merging
 pdbdf['ResidueID'] = pdbdf['ResidueID'].astype(int)
@@ -57,19 +48,19 @@ pdbdf = pdbdf.merge(
     how='left'
 )
 
-# Overwrite Bfactor with 'effect' where available, otherwise keep 1
+# Overwrite Bfactor with 'effect' where available, otherwise keep default Bfactor
 pdbdf['Bfactor'] = pdbdf['effect'].fillna(pdbdf['Bfactor'])
 pdbdf = pdbdf.drop(columns=['position', 'effect'])
 
 
 # --- Save outputs ---
-output_xlsx.parent.mkdir(parents=True, exist_ok=True)  # ensures that "output" folder exists, makes one otherwise
-output_cif.parent.mkdir(parents=True, exist_ok=True)
+####output_xlsx.parent.mkdir(parents=True, exist_ok=True)  
+output_path.parent.mkdir(parents=True, exist_ok=True)# ensures that "output" folder exists, makes one otherwise
 
 pdbdf.to_excel(output_xlsx, index=False)
 
 # Write new cif file with updated ATOM lines
-with open(output_cif, 'w') as f:
+with open(output_path, 'w') as f:
     for line in metadata_lines:
         f.write(line + '\n')
     for _, row in pdbdf.iterrows():
