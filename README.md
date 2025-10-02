@@ -7,7 +7,7 @@ This is useful for using molecular visualisation programs like PyMOL, to color p
 ## Example result
 ![example output](images/0%20example%20output.png)
 
-## Usage
+## Step-by-step guide
 0. Install Python and packages
 1. Prepare input files
 2. Run script
