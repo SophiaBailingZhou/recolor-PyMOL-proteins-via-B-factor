@@ -86,6 +86,12 @@ show surface, molecule_recoded
 ```
 ![pymol coloring result](images/6%20pymol%20color%20result.png)
 
+Tip: use the custom script spectrumany (see pymolwiki) for more control over the colors, possibly in conjunction with spectrumbar to also render the spectrum as a bar for your figure. 
+
+## Troubleshooting
+### The spectrum doesn't match my results
+It could be that your most extreme values are in positions that aren't contained in the structure you're using (for example, because they're flexible regions that are hard to image). In that case, you may want to model your protein with something like AlphaFold (check out ColabFold for a user-friendly version that doesn't require downloading anything) and match the missing bits to your template. 
+
 ## Acknowledgements
 Inspired by Professor Tyler Starr, who explained the conceptual approach for recoding B-factors in PDB files to me. This implementation is independently written. I wanted to make a lightweight script that is non-programmer friendly.
 
