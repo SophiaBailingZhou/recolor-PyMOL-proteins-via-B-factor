@@ -2,14 +2,13 @@ import pandas as pd
 import os
 from pathlib import Path
 
-# --- Define project root
+# Input and output paths relative to project root
 PROJECT_ROOT = Path(__file__).resolve().parent
 
-# --- Input and output paths relative to project root
 molecule_path = PROJECT_ROOT / "input" / "molecule.cif"
 values_path = PROJECT_ROOT / "input" / "newvalues.xlsx"
 output_path = PROJECT_ROOT / "output" / "molecule_recoded.cif"
-####output_xlsx = PROJECT_ROOT / "output" / "output_table.xlsx"
+####output_xlsx = PROJECT_ROOT / "output" / "output_table.xlsx" # optional excel output for easier debugging
 
 # Default B-factor for residues without mutation effect that is to be ignored when coloring
 default_bfactor = -999  
@@ -53,11 +52,8 @@ pdbdf['Bfactor'] = pdbdf['effect'].fillna(pdbdf['Bfactor'])
 pdbdf = pdbdf.drop(columns=['position', 'effect'])
 
 
-# --- Save outputs ---
-####output_xlsx.parent.mkdir(parents=True, exist_ok=True)  
+# Save outputs
 output_path.parent.mkdir(parents=True, exist_ok=True)# ensures that "output" folder exists, makes one otherwise
-
-pdbdf.to_excel(output_xlsx, index=False)
 
 # Write new cif file with updated ATOM lines
 with open(output_path, 'w') as f:
@@ -66,3 +62,8 @@ with open(output_path, 'w') as f:
     for _, row in pdbdf.iterrows():
         line = ' '.join(row.astype(str))
         f.write(line + '\n')
+
+
+# optional excel output for easier debugging
+####output_xlsx.parent.mkdir(parents=True, exist_ok=True) 
+#### pdbdf.to_excel(output_xlsx, index=False) 
